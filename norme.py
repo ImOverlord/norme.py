@@ -1,8 +1,4 @@
-#!/usr/pkg/bin/python2.3
-#
-# Make by duponc_j@epitech.net
-# Version: 1.2.1
-#
+#! /usr/bin/env python
 
 '''
 An Epitech norme checker
@@ -39,14 +35,14 @@ class norme:
         self.score = 0
         self.note = 0
         self.libc = 1
-        self.malloc = 1
+        self.malloc = 0
         self.printline = 0
         self.creturn = 1
         
     def new_file(self):
         self.nb_line = 1
         self.nb_return = 0
-        self.nb_funcline = 0        
+        self.nb_funcline = 0
         self.nb_func = 0
         self.sys_include = 0
         self.double_inclusion = 0
@@ -59,7 +55,7 @@ class norme:
         if (self.nb_line == 1):
             if (self.line[:2] != '/*'):
                 self.print_error('header incorrect')
-        elif (self.nb_line == 9):
+        elif (self.nb_line == 6):
             if (self.line[:2] != '*/'):
                 self.print_error('header incorrect')
         elif self.nb_line == 4 or self.nb_line == 7 or self.nb_line == 8:
@@ -83,7 +79,7 @@ class norme:
     def check_virgule(self):
         n = 0
         quote = 0
-        while self.line[n] != '\n':
+        while self.line[n] != '\n' and n < len(self.line)-1:
             if self.line[n] == '\'' or self.line[n] == '"':
                 if quote:
                     quote = 0
@@ -95,7 +91,7 @@ class norme:
             n = n + 1
 
     def check_nbchar(self):
-        line = self.line.replace('\t', '    ')
+        line = self.line.replace('\t', '        ')
         if (line[80:]):
             self.print_error('chaine de plus de 80 caracteres')
 
@@ -122,8 +118,8 @@ class norme:
             else:
                 if self.nb_func >= 1 and self.is_func:
                     self.nb_funcline = self.nb_funcline + 1
-                    if self.nb_funcline == 26:
-                        self.print_error('fonction de plus de 25 lignes')
+                    if self.nb_funcline >= 21:
+                        self.print_error('fonction de plus de 20 lignes')
 
     def check_cfunc(self):
         p = re.compile('[ \t](if|else|return|while|for)(\()')
@@ -170,7 +166,7 @@ class norme:
     def check_operateur(self, op):
         n = 0
         quote = 0
-        while self.line[n] != '\n':
+        while self.line[n] != '\n' and n < len(self.line)-1:
             if self.line[n] == '\'' or self.line[n] == '"':
                 if quote:
                     quote = 0
@@ -179,7 +175,7 @@ class norme:
             if (self.line[n] == op) and quote == 0:
                 if self.line[n + 1] != ' ' and self.line[n + 1] != ';' and self.line[n + 1] != '=':
                     if self.line[n - 1] != op and self.line[n + 1] != op:
-                        msg = 'Operateur %c mal place' % op
+                        msg = 'Operateur \'%c\' mal place' % op
                         self.print_error(msg)
             n = n + 1
 
@@ -247,7 +243,7 @@ class norme:
                         self.cant_open(file)
                     else:
                         for self.line in fd.readlines():
-                            if self.nb_line <= 9:
+                            if self.nb_line <= 6:
                                 self.check_header()
                             else:
                                 self.check_line()
@@ -326,7 +322,7 @@ def main():
     if '-libc' in sys.argv[1:]:
         moulin.libc = 0
     if '-malloc' in sys.argv[1:]:
-        moulin.malloc = 0
+        moulin.malloc = 1
     if '-printline' in sys.argv[1:]:
         moulin.printline = 1
     if '-return' in sys.argv[1:]:
@@ -346,3 +342,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
