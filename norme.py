@@ -48,6 +48,7 @@ class norme:
 		self.typedef = 0
 		self.check_malloc1 = 0
 		self.one_line = 0
+		self.cut = 0
 		self.malloc_vars = []
 		if self.verbose == 1:
 			print "Scan",self.file
@@ -97,7 +98,7 @@ class norme:
 			self.print_error('chaine de plus de 80 caracteres')
 
 	def check_indentation(self):
-		if self.line[:1] != '}' and '}' in self.line:
+		if self.line[:1] != '}' and '}' in self.line and not ';' in self.line:
 			self.Indentation_level -= 1
 		line = self.line.replace('\t', '        ')
 		i = 0
@@ -106,16 +107,25 @@ class norme:
 		p = re.compile('(if|else|while|for)')
 		test1 = re.search(p, self.line)
 		i = i / 8
-		if i != self.Indentation_level and line[:1] != '}' and i != 0 and self.one_line == 0:
-			self.print_error("identation incorrect")
+		#self.print_error("%d %s" % (i, self.line))
+		if i != self.Indentation_level and line[:1] != '}' and i != 0 and self.one_line == 0 and self.cut == 0:
+			self.print_error("identation incorrecte")
 		if self.one_line == 1:
 			if (i != self.Indentation_level + 1):
-				self.print_error("indentation incorrect")
+				self.print_error("indentation incorrecte")
 			self.one_line = 0
 		if test1 and '{' in self.line:
 			self.Indentation_level += 1
-		if test1 and not '{' in self.line:
+		if test1 and not '{' in self.line and ')' in self.line:
 			self.one_line = 1
+		if self.cut > 0 and ')' in self.line:
+			self.Indentation_level += 1
+			self.cut = 0
+		if self.cut > 0 and not ')' in self.line:
+			self.cut += 1
+		if test1 and not ')' in self.line:
+			self.cut = 1
+		
 		if (i > 3):
 			self.print_error("identation superieur a 3")
 
