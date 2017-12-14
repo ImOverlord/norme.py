@@ -118,7 +118,7 @@ class norme:
             else:
                 if self.nb_func >= 1 and self.is_func:
                     self.nb_funcline = self.nb_funcline + 1
-                    if self.nb_funcline >= 21:
+                    if self.nb_funcline == 21:
                         self.print_error('fonction de plus de 20 lignes')
 
     def check_cfunc(self):
@@ -342,4 +342,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
