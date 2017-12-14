@@ -34,8 +34,10 @@ class norme:
 		self.malloc = 0
 		self.printline = 0
 		self.creturn = 1
+		self.ident = 0
 		
 	def new_file(self):
+		self.Indentation_level = 0
 		self.nb_line = 1
 		self.nb_return = 0
 		self.nb_funcline = 0
@@ -93,6 +95,23 @@ class norme:
 		if (line[80:]):
 			self.print_error('chaine de plus de 80 caracteres')
 
+	def check_indentation(self):
+		if self.line[:1] != '}' and '}' in self.line:
+			self.Indentation_level -= 1
+		line = self.line.replace('\t', '        ')
+		i = 0
+		while line[i] == ' ':
+			i += 1
+		p = re.compile('(if|else|return|while|for)')
+		test1 = re.search(p, self.line)
+		i = i / 8
+		if i != self.Indentation_level and line[:1] != '}' and i != 0:
+			self.print_error("identation incorrect")
+		if test1:
+			self.Indentation_level += 1
+		if (i / 8 > 3):
+			self.print_error("identation superieur a 3")
+
 	def check_return(self):
 		if (self.line[:1] == '\n'):
 			if (self.nb_return == 1):
@@ -115,6 +134,7 @@ class norme:
 				self.nb_funcline = 0
 			if self.line[:1] == '{' and self.typedef == 0:
 				self.is_func = 1
+				self.Indentation_level = 1
 				self.nb_funcline = 0
 				self.nb_func = self.nb_func + 1
 				if self.nb_func == 6:
@@ -159,8 +179,6 @@ class norme:
 			i = 0 
 			while i < self.check_malloc1:
 				word = self.malloc_vars[i] + "== NULL"
-				p = re.compile(r" == NULL")
-				test1 = re.search(p, self.line)
 				if word in self.line:
 					self.malloc_vars.remove(self.malloc_vars[i])
 					self.check_malloc1 -= 1
@@ -213,6 +231,8 @@ class norme:
 			self.print_error(msg)
 
 	def check_line(self):
+		if self.ident == 1:
+			self.check_indentation()
 		self.check_nbline() # DOIT TOUJORS ETRE EN PREMIER
 		self.check_sys_include()
 		self.check_virgule()
@@ -348,6 +368,8 @@ def main():
 		moulin.printline = 1
 	if '-return' in sys.argv[1:]:
 		moulin.creturn = 0
+	if '-indent' in sys.argv[1:]:
+		moulin.ident = 1
 	if '-help' in sys.argv[1:]:
 		help()
 	if sys.argv[1][-1:] != '/':
