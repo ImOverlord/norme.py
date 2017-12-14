@@ -7,7 +7,7 @@ Usage: python norme.py <dir to scan> [-nocheat] [-verbose] [-score] [-libc]
 -nocheat: desactive la detection de la triche
 -score: affiche le nombre de faute de norme
 -libc: active la verification des fonctions de la libc
--malloc: desactive le controle du malloc
+-malloc: active le controle du malloc
 -printline: affiche la ligne provoquant une erreur
 -return: active verifier le retour des fonctions (return ;)
 -comment: ne pas verifier les commentaire
@@ -109,7 +109,7 @@ class norme:
 			self.print_error("identation incorrect")
 		if test1:
 			self.Indentation_level += 1
-		if (i / 8 > 3):
+		if (i > 3):
 			self.print_error("identation superieur a 3")
 
 	def check_return(self):
