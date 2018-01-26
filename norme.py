@@ -147,6 +147,7 @@ class norme:
 						self.print_error(self.malloc_vars[i] + "was not checked")
 						i += 1
 					self.check_malloc1 = 0
+					self.malloc_vars = []
 				self.is_func = 0
 				self.nb_funcline = 0
 			if self.line[:1] == '{' and self.typedef == 0:
