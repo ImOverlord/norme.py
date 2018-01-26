@@ -35,6 +35,7 @@ class norme:
 		self.printline = 0
 		self.creturn = 1
 		self.ident = 0
+		self.prototype = 0
 		
 	def new_file(self):
 		self.Indentation_level = 0
@@ -162,6 +163,11 @@ class norme:
 					self.nb_funcline = self.nb_funcline + 1
 					if self.nb_funcline == 21:
 						self.print_error('fonction de plus de 20 lignes')
+			if self.is_func == 0 and self.line[0] != '#' and self.line[0] != '}' and len(self.line) > 1 and self.prototype == 1:
+				file = open("header", "a")
+				line = self.line[0:len(self.line) - 1] + ";\n"
+				file.write(line)
+				file.close
 
 	def check_cfunc(self):
 		p = re.compile('[ \t](if|else|return|while|for)(\()')
@@ -288,6 +294,9 @@ class norme:
 		except:
 			self.cant_open(thedir)
 		else:
+			if (self.prototype == 1):
+				file = open("header", "w")
+				file.write("")
 			check_makefile(thedir)
 			for file in dir:
 				if (os.path.isdir(thedir + file)):
@@ -390,6 +399,8 @@ def main():
 		moulin.ident = 1
 	if '-help' in sys.argv[1:]:
 		help()
+	if '-prototype' in sys.argv[1:]:
+		moulin.prototype = 1
 	if sys.argv[1][-1:] != '/':
 		sys.argv[1] = sys.argv[1] + '/'
 	if moulin.cheat == 1:
